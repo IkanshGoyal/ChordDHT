@@ -12,8 +12,9 @@ public class ChordNetwork {
         this.maxNodes = maxNodes;
     }
 
-    public Node addNode(int id) {
-        Node newNode = new Node(id, maxNodes);
+    public Node addNode(String ip, int port) {
+        int id = HashUtils.hash(ip + ":" + port, maxNodes);
+        Node newNode = new Node(id, ip, port, maxNodes);
         if (!nodes.isEmpty()) {
             newNode.join(nodes.get(0));
         }
@@ -24,9 +25,14 @@ public class ChordNetwork {
         return newNode;
     }
 
-    public void displayNetwork() {
+    public void removeNode(Node node) {
+        nodes.remove(node);
+        node.leave();
+    }
+
+    public void printState() {
         for (Node node : nodes) {
-            System.out.println(node + " -> Successor: " + node.getSuccessor() + ", Predecessor: " + node.getPredecessor());
+            System.out.println("Node ID: " + node.getId() + ", IP: " + node.getIpAddress() + ", Port: " + node.getPort());
         }
     }
 }

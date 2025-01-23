@@ -2,21 +2,15 @@ package chord;
 
 public class App {
     public static void main(String[] args) {
-        int maxNodes = 8; 
-        ChordNetwork network = new ChordNetwork(maxNodes);
+        ChordNetwork network = new ChordNetwork(16);
 
-        System.out.println("Adding nodes...");
-        Node node1 = network.addNode(1);
-        Node node3 = network.addNode(3);
-        Node node7 = network.addNode(7);
+        Node node1 = network.addNode("127.0.0.1", 8001);
+        Node node2 = network.addNode("127.0.0.1", 8002);
+        Node node3 = network.addNode("127.0.0.1", 8003);
 
-        network.displayNetwork();
+        node1.put(HashUtils.hash("key1", 16), "value1");
+        System.out.println("Get key1: " + node2.get(HashUtils.hash("key1", 16)));
 
-        System.out.println("\nStoring keys...");
-        int key1 = HashUtils.hash("key1", maxNodes);
-        node1.storeKey(key1, "Value1");
-
-        System.out.println("\nRetrieving key...");
-        System.out.println("Key1: " + node3.getValue(key1));
+        network.printState();
     }
 }

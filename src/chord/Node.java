@@ -4,20 +4,24 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Node {
-    private final int id; 
-    private Node predecessor; 
-    private Node successor; 
-    private final Map<Integer, String> data; 
-    private final FingerTable fingerTable; 
-    private final int maxNodes; 
+	private final int id;
+    private final String ipAddress;
+    private final int port;
+    private Node predecessor;
+    private Node successor;
+    private final Map<Integer, String> data;
+    private final FingerTable fingerTable;
+    private final int maxNodes;
 
-    public Node(int id, int maxNodes) {
+    public Node(int id, String ipAddress, int port, int maxNodes) {
         this.id = id;
+        this.ipAddress = ipAddress;
+        this.port = port;
         this.maxNodes = maxNodes;
         this.data = new ConcurrentHashMap<>();
         this.fingerTable = new FingerTable(this, maxNodes);
         this.predecessor = null;
-        this.successor = this; 
+        this.successor = this;
         fingerTable.initialize();
     }
 
@@ -97,6 +101,38 @@ public class Node {
         } else {
             return key > start || key <= end;
         }
+    }
+    
+    public void put(int key, String value) {
+        Node responsibleNode = findSuccessor(key);
+        responsibleNode.data.put(key, value);
+    }
+
+    public String get(int key) {
+        Node responsibleNode = findSuccessor(key);
+        return responsibleNode.data.getOrDefault(key, "Not Found");
+    }
+
+    public void leave() {
+        if (successor != this) {
+            for (Map.Entry<Integer, String> entry : data.entrySet()) {
+                successor.data.put(entry.getKey(), entry.getValue());
+            }
+        }
+        if (predecessor != null) {
+            predecessor.successor = successor;
+        }
+        if (successor != null) {
+            successor.predecessor = predecessor;
+        }
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @Override
