@@ -29,6 +29,10 @@ public class ChordNetwork {
         nodes.remove(node);
         node.leave();
     }
+    
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
     public void printState() {
         for (Node node : nodes) {
